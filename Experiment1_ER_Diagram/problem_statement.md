@@ -22,26 +22,33 @@ FlexiFit Gym wants a database to manage its members, trainers, and fitness progr
 - Payments tracked for memberships and sessions.
 
 ### ER Diagram:
-*Paste or attach your diagram here*  
-![ER Diagram](er_diagram_fitness.png)
+<img width="1536" height="1024" alt="er diagram for senario 1" src="https://github.com/user-attachments/assets/05bc6a27-d6db-40a8-9aae-6fe4eb6d6049" />
+
 
 ### Entities and Attributes
 
-| Entity | Attributes (PK, FK) | Notes |
-|--------|--------------------|-------|
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
+| Entity               | Attributes (PK, FK)                                                                      | Notes                                              |
+| -------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| **MEMBER**           | MemberID (PK), Name, MembershipType, StartDate                                           | Stores gym members.                                |
+| **PROGRAM**          | ProgramID (PK), ProgramName, Category (Yoga, Zumba, Weight Training)                     | Fitness programs offered.                          |
+| **TRAINER**          | TrainerID (PK), Name, Specialization                                                     | Trainers managing programs or sessions.            |
+| **PROGRAM\_TRAINER** | ProgramID (FK), TrainerID (FK)                                                           | Resolves many-to-many between PROGRAM and TRAINER. |
+| **MEMBER\_PROGRAM**  | MemberID (FK), ProgramID (FK), EnrollmentDate                                            | Resolves many-to-many between MEMBER and PROGRAM.  |
+| **SESSION**          | SessionID (PK), MemberID (FK), TrainerID (FK), SessionDate, SessionType (Personal/Group) | Represents personal training bookings or sessions. |
+| **ATTENDANCE**       | AttendanceID (PK), SessionID (FK), MemberID (FK), Status (Present/Absent)                | Tracks member participation in sessions.           |
+| **PAYMENT**          | PaymentID (PK), MemberID (FK), Amount, PaymentDate, PaymentType (Membership/Session)     | Tracks payments by members.                        |
+
 
 ### Relationships and Constraints
 
-| Relationship | Cardinality | Participation | Notes |
-|--------------|------------|---------------|-------|
-|              |            |               |       |
-|              |            |               |       |
-|              |            |               |       |
+| Relationship                         | Cardinality                                              | Participation      | Notes                                                                                                      |
+| ------------------------------------ | -------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------- |
+| MEMBER – MEMBER\_PROGRAM – PROGRAM   | M\:N                                                     | Total (Mandatory)  | A member can enroll in many programs; programs can have many members.                                      |
+| PROGRAM – PROGRAM\_TRAINER – TRAINER | M\:N                                                     | Partial (Optional) | A program may have multiple trainers; a trainer can manage many programs.                                  |
+| MEMBER – SESSION – TRAINER           | M\:N (via SESSION)                                       | Partial            | A session links one trainer and one member, but trainers can have multiple sessions with multiple members. |
+| SESSION – ATTENDANCE – MEMBER        | 1\:M (Session to Attendance), M:1 (Member to Attendance) | Mandatory          | Records which members attended each session.                                                               |
+| MEMBER – PAYMENT                     | 1\:M                                                     | Mandatory          | A member can make multiple payments; each payment is linked to one member.                                 |
+
 
 ### Assumptions
 - 
@@ -64,18 +71,62 @@ The Central Library wants to manage book lending and cultural events.
 - Overdue fines apply for late returns.
 
 ### ER Diagram:
-*Paste or attach your diagram here*  
-![ER Diagram](er_diagram_library.png)
+<img width="1536" height="1024" alt="er diagram for senario 2" src="https://github.com/user-attachments/assets/0f98d887-acca-4308-b758-48a08c3bf459" />
+
 
 ### Entities and Attributes
 
-| Entity | Attributes (PK, FK) | Notes |
-|--------|--------------------|-------|
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
+| Attribute      | Data Type | Key Type |
+| -------------- | --------- | -------- |
+| MemberID       | INT       | PK       |
+| Name           | VARCHAR   | -        |
+| Phone          | VARCHAR   | -        |
+| Email          | VARCHAR   | -        |
+| MembershipDate | DATE      | -        |
+| --------- | --------- | -------- |
+| BookID    | INT       | PK       |
+| Title     | VARCHAR   | -        |
+| Author    | VARCHAR   | -        |
+| Category  | VARCHAR   | -        |
+
+| ---------- | --------- | -------------------- |
+| LoanID     | INT       | PK                   |
+| MemberID   | INT       | FK → MEMBER.MemberID |
+| BookID     | INT       | FK → BOOK.BookID     |
+| LoanDate   | DATE      | -                    |
+| DueDate    | DATE      | -                    |
+| ReturnDate | DATE      | -                    |
+| FineAmount | DECIMAL   | -                    |
+
+| --------- | --------- | -------- |
+| RoomID    | INT       | PK       |
+| RoomName  | VARCHAR   | -        |
+| Capacity  | INT       | -        |
+| RoomType  | VARCHAR   | -        |
+
+| --------- | --------- | ---------------- |
+| EventID   | INT       | PK               |
+| EventName | VARCHAR   | -                |
+| EventDate | DATE      | -                |
+| RoomID    | INT       | FK → ROOM.RoomID |
+
+| --------- | --------- | -------- |
+| SpeakerID | INT       | PK       |
+| Name      | VARCHAR   | -        |
+| Bio       | TEXT      | -        |
+
+| ----------------------------- | --------- | ---------------------- |
+| EventID                       | INT       | FK → EVENT.EventID     |
+| SpeakerID                     | INT       | FK → SPEAKER.SpeakerID |
+| **PK = (EventID, SpeakerID)** |           |                        |
+
+| ---------------- | --------- | -------------------- |
+| RegistrationID   | INT       | PK                   |
+| EventID          | INT       | FK → EVENT.EventID   |
+| MemberID         | INT       | FK → MEMBER.MemberID |
+| RegistrationDate | DATE      | -                    |
+
+
 
 ### Relationships and Constraints
 
@@ -106,26 +157,34 @@ A popular restaurant wants to manage reservations, orders, and billing.
 - Waiters assigned to serve reservations.
 
 ### ER Diagram:
-*Paste or attach your diagram here*  
-![ER Diagram](er_diagram_restaurant.png)
+
 
 ### Entities and Attributes
 
-| Entity | Attributes (PK, FK) | Notes |
-|--------|--------------------|-------|
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
+| Entity          | Attributes (PK, FK)                                                                                                                       | Notes                                         |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| **CUSTOMER**    | CustomerID (PK), Name, Phone, Email                                                                                                       | Stores customer details.                      |
+| **TABLE**       | TableID (PK), Capacity, Location                                                                                                          | Represents physical restaurant tables.        |
+| **RESERVATION** | ReservationID (PK), CustomerID (FK), TableID (FK), ReservationDate, ReservationTime, NumGuests, Type (Reservation/Walk-in), WaiterID (FK) | Tracks table bookings or walk-ins.            |
+| **WAITER**      | WaiterID (PK), Name, Shift                                                                                                                | Waiters serving reservations.                 |
+| **ORDER**       | OrderID (PK), ReservationID (FK), OrderTime                                                                                               | Food orders linked to a reservation.          |
+| **DISH**        | DishID (PK), DishName, Price, CategoryID (FK)                                                                                             | Food menu items.                              |
+| **CATEGORY**    | CategoryID (PK), CategoryName (Starter, Main, Dessert, Beverage)                                                                          | Groups dishes.                                |
+| **ORDER\_ITEM** | OrderID (FK), DishID (FK), Quantity                                                                                                       | Resolves many-to-many between ORDER and DISH. |
+| **BILL**        | BillID (PK), ReservationID (FK), BillDate, FoodAmount, ServiceCharge, TotalAmount                                                         | Final billing per reservation.                |
 
 ### Relationships and Constraints
 
-| Relationship | Cardinality | Participation | Notes |
-|--------------|------------|---------------|-------|
-|              |            |               |       |
-|              |            |               |       |
-|              |            |               |       |
+| Relationship               | Cardinality                  | Participation | Notes                                                                               |
+| -------------------------- | ---------------------------- | ------------- | ----------------------------------------------------------------------------------- |
+| CUSTOMER – RESERVATION     | 1\:M                         | Mandatory     | A customer can have many reservations; each reservation belongs to one customer.    |
+| TABLE – RESERVATION        | 1\:M                         | Mandatory     | A table can be booked many times; each reservation is for one table.                |
+| RESERVATION – WAITER       | 1\:M (Waiter to Reservation) | Optional      | A waiter may serve multiple reservations; each reservation is served by one waiter. |
+| RESERVATION – ORDER        | 1\:M                         | Mandatory     | Each reservation may have multiple food orders.                                     |
+| ORDER – ORDER\_ITEM – DISH | M\:N                         | Mandatory     | Orders can contain multiple dishes; dishes appear in many orders.                   |
+| DISH – CATEGORY            | M:1                          | Mandatory     | Each dish belongs to one category.                                                  |
+| RESERVATION – BILL         | 1:1                          | Mandatory     | Each reservation generates exactly one bill.                                        |
+
 
 ### Assumptions
 - 
